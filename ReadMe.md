@@ -105,8 +105,8 @@ Installation
 
 Clone Repository
 
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
-cd YOUR_REPO
+git clone https://github.com/Demian091/Poly_vtu.git
+cd Poly_vtu
 
 ---
 
@@ -136,9 +136,17 @@ Configure Environment Variables
 
 Create a ".env" file or configure settings with:
 
-PAYSTACK_SECRET_KEY=your_key
-GSUBZ_API_KEY=your_key
-GSUBZ_BASE_URL=https://api.gsubz.com/api
+SECRET_KEY= 
+DEBUG=False
+ALLOWED_HOSTS=
+GSUBZ_API_KEY= 
+GSUBZ_BASE_URL= https://gsubz.com/api
+PAYSTACK_PUBLIC_KEY= 
+PAYSTACK_SECRET_KEY= 
+EMAIL_HOST_USER= 
+EMAIL_HOST_PASSWORD= 
+DATABASE_URL=sqlite:///db.sqlite3
+
 
 ---
 
