@@ -83,21 +83,21 @@ Database
 Project Structure
 
 vtu_project/
-│
-├── manage.py
-├── vtu_project/
-│
-├── services/
-│   ├── templates/
-│   ├── static/
-│   │   ├── css/
-│   │   └── js/
-│   ├── models.py
-│   ├── views.py
-│   ├── urls.py
-│   ├── forms.py
-│   ├── gsubz.py
-│   └── ...
+- │
+- ├── manage.py
+- ├── vtu_project/
+- │
+- ├── services/
+- │   ├── templates/
+- │   ├── static/
+- │   │   ├── css/
+- │   │   └── js/
+- │   ├── models.py
+- │   ├── views.py
+- │   ├── urls.py
+- │   ├── forms.py
+- │   ├── gsubz.py
+- │   └── ...
 
 ---
 
@@ -112,7 +112,7 @@ cd Poly_vtu
 
 Create Virtual Environment
 
-python -m venv venv
+- python -m venv venv
 
 Activate:
 
@@ -136,24 +136,24 @@ Configure Environment Variables
 
 Create a ".env" file or configure settings with:
 
-SECRET_KEY= 
-DEBUG=False
-ALLOWED_HOSTS=
-GSUBZ_API_KEY= 
-GSUBZ_BASE_URL= https://gsubz.com/api
-PAYSTACK_PUBLIC_KEY= 
-PAYSTACK_SECRET_KEY= 
-EMAIL_HOST_USER= 
-EMAIL_HOST_PASSWORD= 
-DATABASE_URL=sqlite:///db.sqlite3
+- SECRET_KEY= 
+- DEBUG=False
+- ALLOWED_HOSTS=
+- GSUBZ_API_KEY= 
+- GSUBZ_BASE_URL= https://gsubz.com/api
+- PAYSTACK_PUBLIC_KEY= 
+- PAYSTACK_SECRET_KEY= 
+- EMAIL_HOST_USER= 
+- EMAIL_HOST_PASSWORD= 
+- DATABASE_URL=sqlite:///db.sqlite3
 
 
 ---
 
 Run Migrations
 
-python manage.py makemigrations
-python manage.py migrate
+- python manage.py makemigrations
+- python manage.py migrate
 
 ---
 
