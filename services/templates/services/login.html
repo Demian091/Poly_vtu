@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | PolyVTU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Floating label animation */
+        .floating-input:focus ~ .floating-label,
+        .floating-input:not(:placeholder-shown) ~ .floating-label {
+            top: -0.5rem;
+            left: 0.75rem;
+            font-size: 0.75rem;
+            color: #4f46e5;
+            background-color: white;
+            padding: 0 0.25rem;
+        }
+        
+        /* Shake animation for errors */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+        .shake {
+            animation: shake 0.3s ease-in-out;
+        }
+        
+        /* Subtle background pattern */
+        .bg-pattern {
+            background-image: radial-gradient(circle at 1px 1px, #e2e8f0 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex items-center justify-center bg-pattern p-4">
+
+    <div class="w-full max-w-md">
+        
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-indigo-200">
+                <i class="fa-solid fa-bolt text-white text-lg"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">PolyVTU</h1>
+            <p class="text-sm text-slate-500 mt-1">Sign in to your account</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            
+            <!-- Error Banner -->
+            {% if error %}
+            <div class="bg-red-50 border-b border-red-100 px-6 py-4 flex items-start gap-3 shake" id="error-banner">
+                <div class="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i class="fa-solid fa-exclamation text-red-600 text-[10px]"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-red-800">Authentication Failed</p>
+                    <p class="text-xs text-red-600 mt-0.5">{{ error }}</p>
+                </div>
+                <button onclick="document.getElementById('error-banner').remove()" class="ml-auto text-red-400 hover:text-red-600 transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            {% endif %}
+
+            <div class="p-6 sm:p-8">
+                <form method="POST" class="space-y-5">
+                    {% csrf_token %}
+                    
+                    <!-- Username Field -->
+                    <div class="relative">
+                        <input type="text" name="username" id="username" placeholder=" " required
+                            class="floating-input w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 peer"
+                            {% if error %}value="{{ request.POST.username }}"{% endif %}>
+                        <label for="username" class="floating-label absolute left-4 top-3 text-sm text-slate-400 transition-all duration-200 pointer-events-none">
+                            Username
+                        </label>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
+                            <i class="fa-regular fa-user text-sm"></i>
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="relative">
+                        <input type="password" name="password" id="password" placeholder=" " required
+                            class="floating-input w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 peer">
+                        <label for="password" class="floating-label absolute left-4 top-3 text-sm text-slate-400 transition-all duration-200 pointer-events-none">
+                            Password
+                        </label>
+                        <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 transition-colors">
+                            <i id="eye-icon" class="fa-regular fa-eye text-sm"></i>
+                        </button>
+                    </div>
+
+                    <!-- Remember & Forgot -->
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-sm text-slate-600">Remember me</span>
+                        </label>
+                        <a href="{% url 'password_reset' %}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+                            Forgot password?
+                        </a>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" 
+                        class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]">
+                        <i class="fa-solid fa-arrow-right-to-bracket text-sm"></i>
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-slate-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-xs uppercase">
+                        <span class="bg-white px-3 text-slate-400 font-medium">or</span>
+                    </div>
+                </div>
+
+                <!-- Register Link -->
+                <div class="text-center">
+                    <p class="text-sm text-slate-600">
+                        No account? 
+                        <a href="/register/" class="font-semibold text-indigo-600 hover:text-indigo-700 transition-colors inline-flex items-center gap-1">
+                            Create one
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-8">
+            <div class="inline-flex items-center gap-2 text-xs text-slate-400">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Secured by PolyVTU</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="{% static 'js/app.js' %}">>
+
+        // Auto-remove error after 5 seconds
+        {% if error %}
+        setTimeout(() => {
+            const banner = document.getElementById('error-banner');
+            if (banner) {
+                banner.style.opacity = '0';
+                banner.style.transform = 'translateY(-10px)';
+                banner.style.transition = 'all 0.3s ease';
+                setTimeout(() => banner.remove(), 300);
+            }
+        }, 5000);
+        {% endif %}
+    </script>
+
+</body>
+</html>
