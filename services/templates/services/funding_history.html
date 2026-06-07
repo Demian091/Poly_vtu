@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funding History | PolyVTU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation -->
+    <nav class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200/50">
+                        <i class="fa-solid fa-bolt text-white text-sm"></i>
+                    </div>
+                    <span class="font-bold text-xl text-slate-900 tracking-tight">PolyVTU</span>
+                </div>
+
+                <div class="hidden md:flex items-center gap-1">
+                    <a href="{% url 'dashboard' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-grid-2 mr-1.5 text-xs"></i>Dashboard
+                    </a>
+                    <a href="{% url 'profile' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all duration-200">
+                        <i class="fa-regular fa-user mr-1.5 text-xs"></i>Profile
+                    </a>
+                    <a href="{% url 'transactions' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-clock-rotate-left mr-1.5 text-xs"></i>Transactions
+                    </a>
+                    <a href="{% url 'settings' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-gear mr-1.5 text-xs"></i>Settings
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="hidden sm:flex items-center gap-2 text-sm text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
+                        <i class="fa-regular fa-user text-xs"></i>
+                        <span class="font-medium">{{ request.user.username }}</span>
+                    </div>
+                    <a href="{% url 'logout' %}" 
+                       class="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+                        <span class="hidden sm:inline">Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div class="flex justify-around items-center h-16">
+            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-grid-2 text-lg"></i>
+                <span class="text-[10px] font-medium">Home</span>
+            </a>
+            <a href="{% url 'profile' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+                <i class="fa-regular fa-user text-lg"></i>
+                <span class="text-[10px] font-medium">Profile</span>
+            </a>
+            <a href="{% url 'transactions' %}" class="flex flex-col items-center gap-1 text-indigo-600">
+                <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+                <span class="text-[10px] font-medium">History</span>
+            </a>
+            <a href="{% url 'settings' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-gear text-lg"></i>
+                <span class="text-[10px] font-medium">Settings</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-2">
+                <a href="{% url 'dashboard' %}" 
+                   class="inline-flex items-center justify-center w-8 h-8 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-all duration-200">
+                    <i class="fa-solid fa-arrow-left text-sm"></i>
+                </a>
+                <h1 class="text-2xl font-bold text-slate-900">Wallet Funding History</h1>
+            </div>
+            <p class="text-slate-500 ml-11">Track all your wallet deposits and top-ups.</p>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">
+                    <i class="fa-solid fa-wallet text-indigo-500"></i>
+                    Total Fundings
+                </div>
+                <p class="text-2xl font-bold text-slate-900">{{ fundings|length }}</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">
+                    <i class="fa-solid fa-check-circle text-emerald-500"></i>
+                    Successful
+                </div>
+                <p class="text-2xl font-bold text-emerald-600">
+                    {{ fundings_success|default:fundings|length }}
+                </p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">
+                    <i class="fa-solid fa-naira-sign text-amber-500"></i>
+                    Total Amount
+                </div>
+                <p class="text-2xl font-bold text-slate-900">₦{{ total_funded|default:"0.00" }}</p>
+            </div>
+        </div>
+
+        <!-- Funding Table Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="flex items-center justify-between p-6 border-b border-slate-100">
+                <div class="flex items-center gap-2 text-slate-900 font-semibold">
+                    <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-money-bill-transfer text-emerald-600 text-sm"></i>
+                    </div>
+                    Funding Records
+                </div>
+                <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
+                    {{ fundings|length }} records
+                </span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-slate-100 bg-slate-50/50">
+                            <th class="px-6 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Reference</th>
+                            <th class="px-6 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Amount</th>
+                            <th class="px-6 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Status</th>
+                            <th class="px-6 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        {% for funding in fundings %}
+                        <tr class="hover:bg-slate-50/80 transition-colors duration-150">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0">
+                                        <i class="fa-solid fa-hashtag text-indigo-500 text-[10px]"></i>
+                                    </div>
+                                    <span class="text-sm font-mono font-medium text-slate-700 truncate max-w-[140px] sm:max-w-xs" title="{{ funding.reference }}">
+                                        {{ funding.reference }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="text-sm font-bold text-slate-900">₦{{ funding.amount }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold
+                                    {% if funding.status == 'success' %}bg-emerald-100 text-emerald-700
+                                    {% elif funding.status == 'pending' %}bg-amber-100 text-amber-700
+                                    {% elif funding.status == 'failed' %}bg-red-100 text-red-700
+                                    {% else %}bg-slate-100 text-slate-700{% endif %}">
+                                    {% if funding.status == 'success' %}
+                                        <i class="fa-solid fa-check text-[9px]"></i>
+                                    {% elif funding.status == 'pending' %}
+                                        <i class="fa-solid fa-spinner text-[9px] animate-spin"></i>
+                                    {% elif funding.status == 'failed' %}
+                                        <i class="fa-solid fa-xmark text-[9px]"></i>
+                                    {% endif %}
+                                    {{ funding.status|title }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex flex-col items-end">
+                                    <span class="text-sm text-slate-700 font-medium">{{ funding.created_at|date:"M d, Y" }}</span>
+                                    <span class="text-xs text-slate-400">{{ funding.created_at|date:"h:i A" }}</span>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center text-slate-400">
+                                    <div class="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mb-3">
+                                        <i class="fa-solid fa-receipt text-xl text-slate-300"></i>
+                                    </div>
+                                    <p class="text-sm font-medium text-slate-500">No funding records found</p>
+                                    <p class="text-xs text-slate-400 mt-1 max-w-xs">Your wallet funding history will appear here once you make a deposit.</p>
+                                    <a href="{% url 'dashboard' %}" 
+                                       class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl transition-all duration-200 shadow-sm">
+                                        <i class="fa-solid fa-plus text-xs"></i>
+                                        Fund Wallet
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Back Link -->
+        <div class="mt-6 text-center">
+            <a href="{% url 'dashboard' %}" 
+               class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-indigo-600 transition-colors">
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+                Back to Dashboard
+            </a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto hidden md:block">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 bg-indigo-600 rounded-md flex items-center justify-center">
+                        <i class="fa-solid fa-bolt text-white text-[10px]"></i>
+                    </div>
+                    <span class="font-bold text-sm text-slate-900">PolyVTU</span>
+                </div>
+                <p class="text-xs text-slate-400">© {% now "Y" %} PolyVTU. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

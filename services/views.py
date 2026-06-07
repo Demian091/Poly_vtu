@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import redirect
-from .forms import RegisterForm
+from .forms import *
 import requests
 from decimal import Decimal
 from django.conf import settings
@@ -15,6 +15,15 @@ from .gsubz import get_plans, VTUService
 import uuid
 import json
 from .models import *
+
+
+@login_required
+def profile_view(request):
+    wallet = Wallet.objects.get(user=request.user)
+
+    return render(request, "services/profile.html", {
+        "wallet": wallet
+    })
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -207,33 +216,61 @@ def transaction_receipt(request, tx_id):
     })
 
 
-# @api_view(["GET"])
-# def get_services_view(request):
+@login_required
+def edit_profile(request):
 
-#     services = [
-#         {"id": "mtn_sme", "name": "MTN SME"},
-#         {"id": "mtn_cg_lite", "name": "MTN SME 2.0"},
-#         {"id": "mtn_awoof", "name": "MTN Awoof"},
-#         {"id": "mtn_gifting", "name": "MTN Gifting"},
-#         {"id": "mtn_datashare", "name": "MTN Data Share"},
-#         {"id": "mtn_coupon", "name": "MTN Coupon"},
-#         {"id": "mtncg", "name": "MTN Corporate Gifting"},
-#         {"id": "airtel_cg", "name": "Airtel CG"},
-#         {"id": "airtel_gifting", "name": "Airtel Gifting"},
-#         {"id": "airtel_sme", "name": "Airtel SME"},
-#         {"id": "glo_data", "name": "Glo Corporate"},
-#         {"id": "glo_sme", "name": "Glo SME"},
-#         {"id": "etisalat_data", "name": "9mobile"}
-#     ]
+    if request.method == "POST":
+        form = ProfileForm(
+            request.POST,
+            request.FILES,
+            instance=request.user
+        )
 
-#     active_services = []
+        if form.is_valid():
+            form.save()
+            return redirect("profile")
 
-#     for service in services:
+    else:
+        form = ProfileForm(instance=request.user)
 
-#         plans = get_plans(service["id"])
+    return render(
+        request,
+        "services/edit_profile.html",
+        {"form": form}
+    )
+    
+    
+@login_required
+def transaction_history(request):
 
-#         if plans:
-#             active_services.append(service)
+    transactions = Transaction.objects.filter(user=request.user).order_by("-created_at")
 
-#     return Response(active_services)
+    return render(
+        request,
+        "services/transactions.html",
+        {
+            "transactions": transactions
+        }
+    )
+    
+  
+@login_required
+def funding_history(request):
 
+    fundings = WalletFunding.objects.filter(user=request.user).order_by("-created_at")
+
+    return render(
+        request,
+        "services/funding_history.html",
+        {
+            "fundings": fundings
+        }
+    )
+    
+
+@login_required
+def settings_view(request):
+    return render(
+        request,
+        "services/settings.html"
+    )

@@ -1,14 +1,14 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+import uuid
+from django.conf import settings
+
 
 
 class User(AbstractUser):
-    phone = models.CharField(
-        max_length=15,
-        unique=True,
-        blank=True,
-        null=True
-    )
+    phone = models.CharField(max_length=15, unique=True, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to="profiles/", blank=True, null=True
+)
 
 
 class Wallet(models.Model):
@@ -138,3 +138,21 @@ class WalletFunding(models.Model):
 
     def __str__(self):
         return self.reference
+        
+class APIKey(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    key = models.CharField(max_length=64, unique=True, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        if not self.key:
+            self.key = uuid.uuid4().hex + uuid.uuid4().hex
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.key[:16]}..."
+  

@@ -8,8 +8,8 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-
-DEBUG = os.getenv("DEBUG", "False") == 'True'
+# DEBUG = os.getenv("DEBUG", "False") == 'True'
+DEBUG = 'True'
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -31,7 +31,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
     'services',
+    
 ]
 
 MIDDLEWARE = [
@@ -62,6 +66,49 @@ TEMPLATES = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'services.authentication.APIKeyAuthentication',
+        'rest_framework.authentication.SessionAuthentication',  # For web browsable API
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'services.pagination.StandardPagination',
+    'DEFAULT_THROTTLE_CLASSES': [
+        'services.throttling.AnonBurstRateThrottle',
+        'services.throttling.AnonSustainedRateThrottle',
+        'services.throttling.UserBurstRateThrottle',
+        'services.throttling.UserSustainedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon_burst': '5/minute',
+        'anon_sustained': '100/day',
+        'user_burst': '60/minute',
+        'user_sustained': '1000/day',
+    },
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
+    'EXCEPTION_HANDLER': 'services.utils.custom_exception_handler',
+}
+
+# CORS settings for mobile app
+CORS_ALLOWED_ORIGINS = [
+    # Add your mobile app domain if needed
+    # 'https://yourapp.com',
+]
+
+CORS_ALLOW_ALL_ORIGINS = True  # Set to False in production
+
+# API Key header name
+API_KEY_HEADER = 'X-API-Key'
 
 
 GSUBZ_API_KEY = os.getenv("GSUBZ_API_KEY")
@@ -88,8 +135,8 @@ LOGOUT_REDIRECT_URL = "login"
 # # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config (
-        default=f"sqlite://{BASE_DIR / 'db.sqlite3'}",
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600
     )
 }
@@ -144,4 +191,9 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+
+from django.core.mail import send_mail
 

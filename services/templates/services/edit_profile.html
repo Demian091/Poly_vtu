@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | PolyVTU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Style Django form.as_p output */
+        .django-form p {
+            margin-bottom: 1.25rem;
+        }
+        .django-form label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 0.375rem;
+        }
+        .django-form input[type="text"],
+        .django-form input[type="email"],
+        .django-form input[type="tel"],
+        .django-form input[type="url"],
+        .django-form input[type="number"],
+        .django-form input[type="password"],
+        .django-form textarea,
+        .django-form select {
+            width: 100%;
+            padding: 0.625rem 1rem;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            color: #0f172a;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        .django-form input:focus,
+        .django-form textarea:focus,
+        .django-form select:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        .django-form input::placeholder,
+        .django-form textarea::placeholder {
+            color: #94a3b8;
+        }
+        .django-form .helptext {
+            display: block;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+        .django-form .errorlist {
+            list-style: none;
+            padding: 0;
+            margin: 0.25rem 0 0 0;
+        }
+        .django-form .errorlist li {
+            font-size: 0.75rem;
+            color: #dc2626;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .django-form .errorlist li::before {
+            content: "\f071";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 0.625rem;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation -->
+    <nav class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200/50">
+                        <i class="fa-solid fa-bolt text-white text-sm"></i>
+                    </div>
+                    <span class="font-bold text-xl text-slate-900 tracking-tight">PolyVTU</span>
+                </div>
+
+                <div class="hidden md:flex items-center gap-1">
+                    <a href="{% url 'dashboard' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-grid-2 mr-1.5 text-xs"></i>Dashboard
+                    </a>
+                    <a href="{% url 'profile' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg transition-all duration-200">
+                        <i class="fa-regular fa-user mr-1.5 text-xs"></i>Profile
+                    </a>
+                    <a href="{% url 'transactions' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-clock-rotate-left mr-1.5 text-xs"></i>Transactions
+                    </a>
+                    <a href="{% url 'settings' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-gear mr-1.5 text-xs"></i>Settings
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="hidden sm:flex items-center gap-2 text-sm text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
+                        <i class="fa-regular fa-user text-xs"></i>
+                        <span class="font-medium">{{ request.user.username }}</span>
+                    </div>
+                    <a href="{% url 'logout' %}" 
+                       class="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+                        <span class="hidden sm:inline">Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div class="flex justify-around items-center h-16">
+            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-grid-2 text-lg"></i>
+                <span class="text-[10px] font-medium">Home</span>
+            </a>
+            <a href="{% url 'profile' %}" class="flex flex-col items-center gap-1 text-indigo-600">
+                <i class="fa-regular fa-user text-lg"></i>
+                <span class="text-[10px] font-medium">Profile</span>
+            </a>
+            <a href="{% url 'transactions' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+                <span class="text-[10px] font-medium">History</span>
+            </a>
+            <a href="{% url 'settings' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-gear text-lg"></i>
+                <span class="text-[10px] font-medium">Settings</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-2">
+                <a href="{% url 'profile' %}" 
+                   class="inline-flex items-center justify-center w-8 h-8 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-all duration-200">
+                    <i class="fa-solid fa-arrow-left text-sm"></i>
+                </a>
+                <h1 class="text-2xl font-bold text-slate-900">Edit Profile</h1>
+            </div>
+            <p class="text-slate-500 ml-11">Update your personal information and account details.</p>
+        </div>
+
+        <!-- Edit Form Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            
+            <!-- Form Header -->
+            <div class="p-6 border-b border-slate-100 bg-slate-50/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
+                        <i class="fa-solid fa-user-pen text-indigo-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-semibold text-slate-900">Profile Information</h2>
+                        <p class="text-xs text-slate-500">Make changes to your account below</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form method="POST" enctype="multipart/form-data" class="p-6 django-form">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <!-- Actions -->
+                <div class="flex items-center gap-3 pt-4 mt-2 border-t border-slate-100">
+                    <button type="submit" 
+                            class="inline-flex justify-center items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]">
+                        <i class="fa-solid fa-check text-sm"></i>
+                        Save Changes
+                    </button>
+                    
+                    <a href="{% url 'profile' %}" 
+                       class="inline-flex justify-center items-center gap-2 px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl transition-all duration-200 active:scale-[0.98]">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tips Card -->
+        <div class="mt-6 bg-amber-50 border border-amber-100 rounded-2xl p-5">
+            <div class="flex items-start gap-3">
+                <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i class="fa-solid fa-lightbulb text-amber-600 text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-amber-800">Tips</h3>
+                    <ul class="text-xs text-amber-700 mt-1 space-y-1 list-disc list-inside">
+                        <li>Use a clear profile picture for easy identification</li>
+                        <li>Ensure your phone number is correct for transaction notifications</li>
+                        <li>Your email is used for account recovery</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto hidden md:block">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 bg-indigo-600 rounded-md flex items-center justify-center">
+                        <i class="fa-solid fa-bolt text-white text-[10px]"></i>
+                    </div>
+                    <span class="font-bold text-sm text-slate-900">PolyVTU</span>
+                </div>
+                <p class="text-xs text-slate-400">© {% now "Y" %} PolyVTU. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

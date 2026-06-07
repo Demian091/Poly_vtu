@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | PolyVTU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation -->
+    <nav class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200/50">
+                        <i class="fa-solid fa-bolt text-white text-sm"></i>
+                    </div>
+                    <span class="font-bold text-xl text-slate-900 tracking-tight">PolyVTU</span>
+                </div>
+
+                <div class="hidden md:flex items-center gap-1">
+                    <a href="{% url 'dashboard' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-grid-2 mr-1.5 text-xs"></i>Dashboard
+                    </a>
+                    <a href="{% url 'profile' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg transition-all duration-200">
+                        <i class="fa-regular fa-user mr-1.5 text-xs"></i>Profile
+                    </a>
+                    <a href="{% url 'transactions' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-clock-rotate-left mr-1.5 text-xs"></i>Transactions
+                    </a>
+                    <a href="{% url 'settings' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-gear mr-1.5 text-xs"></i>Settings
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="hidden sm:flex items-center gap-2 text-sm text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
+                        <i class="fa-regular fa-user text-xs"></i>
+                        <span class="font-medium">{{ request.user.username }}</span>
+                    </div>
+                    <a href="{% url 'logout' %}" 
+                       class="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+                        <span class="hidden sm:inline">Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div class="flex justify-around items-center h-16">
+            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-grid-2 text-lg"></i>
+                <span class="text-[10px] font-medium">Home</span>
+            </a>
+            <a href="{% url 'profile' %}" class="flex flex-col items-center gap-1 text-indigo-600">
+                <i class="fa-regular fa-user text-lg"></i>
+                <span class="text-[10px] font-medium">Profile</span>
+            </a>
+            <a href="{% url 'transactions' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+                <span class="text-[10px] font-medium">History</span>
+            </a>
+            <a href="{% url 'settings' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-gear text-lg"></i>
+                <span class="text-[10px] font-medium">Settings</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
+        
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-slate-900">My Profile</h1>
+            <p class="text-slate-500 mt-1">View and manage your account details.</p>
+        </div>
+
+        <!-- Profile Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Left: Profile Card -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 text-center">
+                    
+                    <!-- Profile Picture -->
+                    <div class="relative inline-block mb-4">
+                        {% if request.user.profile_picture %}
+                            <img src="{{ request.user.profile_picture.url }}" 
+                                 alt="Profile Picture"
+                                 class="w-32 h-32 rounded-full object-cover border-4 border-indigo-50 shadow-md mx-auto">
+                        {% else %}
+                            <div class="w-32 h-32 rounded-full bg-indigo-100 border-4 border-indigo-50 shadow-md mx-auto flex items-center justify-center">
+                                <i class="fa-regular fa-user text-4xl text-indigo-400"></i>
+                            </div>
+                        {% endif %}
+                        <div class="absolute bottom-1 right-1 w-8 h-8 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center" title="Active">
+                            <i class="fa-solid fa-check text-white text-xs"></i>
+                        </div>
+                    </div>
+
+                    <h2 class="text-xl font-bold text-slate-900">{{ request.user.username }}</h2>
+                    <p class="text-sm text-slate-500 mt-1">{{ request.user.email }}</p>
+
+                    <div class="mt-6 pt-6 border-t border-slate-100">
+                        <a href="{% url 'edit_profile' %}" 
+                           class="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]">
+                            <i class="fa-solid fa-pen-to-square text-sm"></i>
+                            Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Details & Wallet -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Account Details Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <div class="flex items-center gap-2 text-slate-900 font-semibold mb-6">
+                        <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                            <i class="fa-solid fa-id-card text-indigo-600 text-sm"></i>
+                        </div>
+                        Account Information
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                                    <i class="fa-regular fa-user text-slate-400"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Username</p>
+                                    <p class="text-sm font-semibold text-slate-900">{{ request.user.username }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                                    <i class="fa-regular fa-envelope text-slate-400"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Email</p>
+                                    <p class="text-sm font-semibold text-slate-900">{{ request.user.email|default:"Not provided" }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                                    <i class="fa-solid fa-phone text-slate-400"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Phone</p>
+                                    <p class="text-sm font-semibold text-slate-900">{{ request.user.phone|default:"Not provided" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wallet Balance Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-emerald-50 rounded-full -mr-20 -mt-20 opacity-60"></div>
+                    <div class="relative">
+                        <div class="flex items-center gap-2 text-slate-500 text-sm font-medium mb-3">
+                            <div class="w-7 h-7 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-wallet text-emerald-600 text-xs"></i>
+                            </div>
+                            Wallet Balance
+                        </div>
+                        <h2 class="text-4xl font-bold text-slate-900 tracking-tight">
+                            ₦{{ wallet.balance }}
+                        </h2>
+                        <div class="mt-4 flex items-center gap-3">
+                            <a href="{% url 'dashboard' %}" 
+                               class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]">
+                                <i class="fa-solid fa-plus text-xs"></i>
+                                Fund Wallet
+                            </a>
+                            <a href="{% url 'transactions' %}" 
+                               class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition-all duration-200">
+                                <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+                                History
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <div class="flex items-center gap-2 text-slate-900 font-semibold mb-4">
+                        <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                            <i class="fa-solid fa-bolt text-amber-600 text-sm"></i>
+                        </div>
+                        Quick Actions
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <a href="{% url 'dashboard' %}" 
+                           class="flex flex-col items-center gap-2 p-4 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-xl transition-all duration-200 group">
+                            <div class="w-10 h-10 bg-white group-hover:bg-indigo-100 rounded-lg flex items-center justify-center shadow-sm transition-colors">
+                                <i class="fa-solid fa-grid-2 text-slate-400 group-hover:text-indigo-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-slate-600 group-hover:text-indigo-700">Dashboard</span>
+                        </a>
+                        <a href="{% url 'transactions' %}" 
+                           class="flex flex-col items-center gap-2 p-4 bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 rounded-xl transition-all duration-200 group">
+                            <div class="w-10 h-10 bg-white group-hover:bg-amber-100 rounded-lg flex items-center justify-center shadow-sm transition-colors">
+                                <i class="fa-solid fa-clock-rotate-left text-slate-400 group-hover:text-amber-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-slate-600 group-hover:text-amber-700">History</span>
+                        </a>
+                        <a href="{% url 'settings' %}" 
+                           class="flex flex-col items-center gap-2 p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-xl transition-all duration-200 group">
+                            <div class="w-10 h-10 bg-white group-hover:bg-slate-200 rounded-lg flex items-center justify-center shadow-sm transition-colors">
+                                <i class="fa-solid fa-gear text-slate-400 group-hover:text-slate-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-slate-600 group-hover:text-slate-800">Settings</span>
+                        </a>
+                        <a href="{% url 'logout' %}" 
+                           class="flex flex-col items-center gap-2 p-4 bg-slate-50 hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-xl transition-all duration-200 group">
+                            <div class="w-10 h-10 bg-white group-hover:bg-red-100 rounded-lg flex items-center justify-center shadow-sm transition-colors">
+                                <i class="fa-solid fa-arrow-right-from-bracket text-slate-400 group-hover:text-red-600"></i>
+                            </div>
+                            <span class="text-xs font-medium text-slate-600 group-hover:text-red-700">Logout</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto hidden md:block">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 bg-indigo-600 rounded-md flex items-center justify-center">
+                        <i class="fa-solid fa-bolt text-white text-[10px]"></i>
+                    </div>
+                    <span class="font-bold text-sm text-slate-900">PolyVTU</span>
+                </div>
+                <p class="text-xs text-slate-400">© {% now "Y" %} PolyVTU. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

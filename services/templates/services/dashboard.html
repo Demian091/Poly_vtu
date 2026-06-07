@@ -4,61 +4,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PolyVTU</title>
+    <title>Dashboard | PolyVTU</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* Status badge colors via inline styles or utility classes */
-        .status-success { @apply bg-emerald-100 text-emerald-700; }
-        .status-pending { @apply bg-amber-100 text-amber-700; }
-        .status-failed { @apply bg-red-100 text-red-700; }
+        .page-transition { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
 
     <!-- Top Navigation -->
-    <nav class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+    <nav class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                    <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200/50">
                         <i class="fa-solid fa-bolt text-white text-sm"></i>
                     </div>
                     <span class="font-bold text-xl text-slate-900 tracking-tight">PolyVTU</span>
                 </div>
-                
-                <div class="flex items-center gap-4">
+
+                <div class="hidden md:flex items-center gap-1">
+                    <a href="{% url 'dashboard' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-grid-2 mr-1.5 text-xs"></i>Dashboard
+                    </a>
+                    <a href="{% url 'profile' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all duration-200">
+                        <i class="fa-regular fa-user mr-1.5 text-xs"></i>Profile
+                    </a>
+                    <a href="{% url 'transactions' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-clock-rotate-left mr-1.5 text-xs"></i>Transactions
+                    </a>
+                    <a href="{% url 'settings' %}" 
+                       class="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-gear mr-1.5 text-xs"></i>Settings
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-3">
                     <div class="hidden sm:flex items-center gap-2 text-sm text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
                         <i class="fa-regular fa-user text-xs"></i>
                         <span class="font-medium">{{ request.user.username }}</span>
                     </div>
-                    
-                    {% if request.user.is_authenticated %}
-                        <a href="{% url 'logout' %}" 
-                           class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200">
-                            <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
-                            Logout
-                        </a>
-                    {% else %}
-                        <a href="{% url 'login' %}" 
-                           class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors duration-200 shadow-sm hover:shadow">
-                            <i class="fa-solid fa-arrow-right-to-bracket text-xs"></i>
-                            Login
-                        </a>
-                    {% endif %}
+                    <a href="{% url 'logout' %}" 
+                       class="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all duration-200">
+                        <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+                        <span class="hidden sm:inline">Logout</span>
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- Mobile Bottom Navigation -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div class="flex justify-around items-center h-16">
+            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-indigo-600">
+                <i class="fa-solid fa-grid-2 text-lg"></i>
+                <span class="text-[10px] font-medium">Home</span>
+            </a>
+            <a href="{% url 'profile' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+                <i class="fa-regular fa-user text-lg"></i>
+                <span class="text-[10px] font-medium">Profile</span>
+            </a>
+            <a href="{% url 'transactions' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+                <span class="text-[10px] font-medium">History</span>
+            </a>
+            <a href="{% url 'settings' %}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-gear text-lg"></i>
+                <span class="text-[10px] font-medium">Settings</span>
+            </a>
+        </div>
+    </div>
+
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8 page-transition">
         
         <!-- Welcome Section -->
         <div class="mb-8">
@@ -73,26 +105,28 @@
             <div class="lg:col-span-1 space-y-6">
                 
                 <!-- Wallet Balance Card -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative overflow-hidden group hover:shadow-md transition-shadow duration-300">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-indigo-50 rounded-full -mr-20 -mt-20 opacity-60 group-hover:scale-110 transition-transform duration-500"></div>
                     <div class="relative">
-                        <div class="flex items-center gap-2 text-slate-500 text-sm font-medium mb-2">
-                            <i class="fa-solid fa-wallet text-indigo-500"></i>
+                        <div class="flex items-center gap-2 text-slate-500 text-sm font-medium mb-3">
+                            <div class="w-7 h-7 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-wallet text-indigo-600 text-xs"></i>
+                            </div>
                             Wallet Balance
                         </div>
                         <h2 class="text-4xl font-bold text-slate-900 tracking-tight">
                             ₦{{ wallet.balance }}
                         </h2>
-                        <div class="mt-4 flex items-center text-xs text-slate-400">
-                            <i class="fa-solid fa-shield-halved mr-1.5"></i>
+                        <div class="mt-4 flex items-center text-xs text-slate-400 bg-slate-50 w-fit px-3 py-1.5 rounded-full">
+                            <i class="fa-solid fa-shield-halved mr-1.5 text-emerald-500"></i>
                             Secure & Instant
                         </div>
                     </div>
                 </div>
 
                 <!-- Fund Wallet Card -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <div class="flex items-center gap-2 text-slate-900 font-semibold mb-4">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-300">
+                    <div class="flex items-center gap-2 text-slate-900 font-semibold mb-5">
                         <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
                             <i class="fa-solid fa-plus text-emerald-600 text-sm"></i>
                         </div>
@@ -103,30 +137,44 @@
                         <div>
                             <label for="fund-amount" class="block text-sm font-medium text-slate-700 mb-1.5">Amount (₦)</label>
                             <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-slate-400 font-medium">₦</span>
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <span class="text-slate-400 font-semibold text-sm">₦</span>
                                 </div>
-                                <input type="number" id="fund-amount" placeholder="0.00" 
-                                    class="w-full pl-8 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200">
+                                <input type="number" id="fund-amount" placeholder="0.00" min="100"
+                                    class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-200 font-medium">
                             </div>
+                            <p class="text-xs text-slate-400 mt-1.5 ml-1">Minimum funding: ₦100</p>
                         </div>
                         
                         <button onclick="fundWallet()" 
-                            class="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]">
+                            class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]">
                             <i class="fa-solid fa-credit-card text-sm"></i>
                             Fund Wallet
                         </button>
                         
-                        <p id="fund-message" class="text-sm text-center min-h-[1.25rem]"></p>
+                        <p id="fund-message" class="text-sm text-center min-h-[1.25rem] font-medium"></p>
                     </div>
                 </div>
+
+                <!-- NEW: Funding History Link -->
+                <a href="{% url 'funding_history' %}" 
+                   class="flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-md hover:border-indigo-200 transition-all duration-200 group">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
+                        <i class="fa-solid fa-money-bill-transfer text-indigo-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-sm font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors">Wallet Funding History</h3>
+                        <p class="text-xs text-slate-500">View all your deposits</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-indigo-500 transition-colors"></i>
+                </a>
             </div>
 
             <!-- Right Column: Buy Data & Transactions -->
             <div class="lg:col-span-2 space-y-6">
                 
                 <!-- Buy Data Card -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-300">
                     <div class="flex items-center gap-2 text-slate-900 font-semibold mb-6">
                         <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
                             <i class="fa-solid fa-signal text-indigo-600 text-sm"></i>
@@ -139,7 +187,7 @@
                             <label for="service" class="block text-sm font-medium text-slate-700 mb-1.5">Network</label>
                             <div class="relative">
                                 <select id="service" 
-                                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent appearance-none cursor-pointer transition-all duration-200">
+                                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 appearance-none cursor-pointer transition-all duration-200 font-medium">
                                     <option value="">Select Network</option>
                                     <option value="mtn_sme">MTN SME</option>
                                     <option value="mtn_awoof">MTN Awoof</option>
@@ -150,7 +198,7 @@
                                     <option value="glo_sme">Glo SME</option>
                                     <option value="etisalat_data">9mobile</option>
                                 </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
                                     <i class="fa-solid fa-chevron-down text-slate-400 text-xs"></i>
                                 </div>
                             </div>
@@ -160,38 +208,38 @@
                             <label for="plan" class="block text-sm font-medium text-slate-700 mb-1.5">Data Plan</label>
                             <div class="relative">
                                 <select id="plan" 
-                                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent appearance-none cursor-pointer transition-all duration-200">
+                                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 appearance-none cursor-pointer transition-all duration-200 font-medium">
                                     <option>Select Plan</option>
                                 </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
                                     <i class="fa-solid fa-chevron-down text-slate-400 text-xs"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-5">
                         <label for="phone" class="block text-sm font-medium text-slate-700 mb-1.5">Phone Number</label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                                 <i class="fa-solid fa-phone text-slate-400 text-sm"></i>
                             </div>
                             <input type="tel" id="phone" placeholder="0801 234 5678" 
-                                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200">
+                                class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 font-medium">
                         </div>
                     </div>
 
                     <button id="buy-btn" onclick="buyData(event)" 
-                        class="w-full md:w-auto inline-flex justify-center items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]">
+                        class="w-full md:w-auto inline-flex justify-center items-center gap-2 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]">
                         <i class="fa-solid fa-cart-shopping text-sm"></i>
                         Buy Now
                     </button>
 
-                    <p id="result" class="text-sm mt-3 min-h-[1.25rem]"></p>
+                    <p id="result" class="text-sm mt-4 min-h-[1.25rem] font-medium"></p>
                 </div>
 
                 <!-- Transactions Table Card -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-300">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-2 text-slate-900 font-semibold">
                             <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
@@ -199,7 +247,7 @@
                             </div>
                             Recent Transactions
                         </div>
-                        <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
+                        <span class="text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
                             {{ transactions|length }} records
                         </span>
                     </div>
@@ -216,29 +264,29 @@
                             </thead>
                             <tbody class="divide-y divide-slate-50">
                                 {% for tx in transactions %}
-                                <tr class="hover:bg-slate-50/50 transition-colors duration-150">
-                                    <td class="py-3 text-sm font-medium text-slate-900">
-                                        <div class="flex items-center gap-2">
-                                            <div class="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0">
+                                <tr class="hover:bg-slate-50/80 transition-colors duration-150">
+                                    <td class="py-3.5 text-sm font-medium text-slate-900">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="w-7 h-7 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0">
                                                 <i class="fa-solid fa-wifi text-indigo-500 text-[10px]"></i>
                                             </div>
-                                            {{ tx.service }}
+                                            <span class="truncate max-w-[120px]">{{ tx.service }}</span>
                                         </div>
                                     </td>
-                                    <td class="py-3 text-sm text-slate-600 font-mono">{{ tx.phone }}</td>
-                                    <td class="py-3 text-sm font-semibold text-slate-900 text-right">₦{{ tx.amount }}</td>
-                                    <td class="py-3 text-center">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    <td class="py-3.5 text-sm text-slate-600 font-mono">{{ tx.phone }}</td>
+                                    <td class="py-3.5 text-sm font-bold text-slate-900 text-right">₦{{ tx.amount }}</td>
+                                    <td class="py-3.5 text-center">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold
                                             {% if tx.status == 'success' %}bg-emerald-100 text-emerald-700
                                             {% elif tx.status == 'pending' %}bg-amber-100 text-amber-700
                                             {% elif tx.status == 'failed' %}bg-red-100 text-red-700
                                             {% else %}bg-slate-100 text-slate-700{% endif %}">
                                             {% if tx.status == 'success' %}
-                                                <i class="fa-solid fa-check mr-1 text-[10px]"></i>
+                                                <i class="fa-solid fa-check text-[9px]"></i>
                                             {% elif tx.status == 'pending' %}
-                                                <i class="fa-solid fa-spinner mr-1 text-[10px] animate-spin"></i>
+                                                <i class="fa-solid fa-spinner text-[9px] animate-spin"></i>
                                             {% elif tx.status == 'failed' %}
-                                                <i class="fa-solid fa-xmark mr-1 text-[10px]"></i>
+                                                <i class="fa-solid fa-xmark text-[9px]"></i>
                                             {% endif %}
                                             {{ tx.status|title }}
                                         </span>
@@ -246,10 +294,13 @@
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="4" class="py-8 text-center">
+                                    <td colspan="4" class="py-10 text-center">
                                         <div class="flex flex-col items-center text-slate-400">
-                                            <i class="fa-regular fa-folder-open text-3xl mb-2"></i>
-                                            <p class="text-sm">No transactions yet</p>
+                                            <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-3">
+                                                <i class="fa-regular fa-folder-open text-lg"></i>
+                                            </div>
+                                            <p class="text-sm font-medium">No transactions yet</p>
+                                            <p class="text-xs mt-1">Your purchase history will appear here</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -263,11 +314,9 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 mt-12">
+    <footer class="bg-white border-t border-slate-200 mt-auto hidden md:block">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-                
-                <!-- Brand -->
                 <div class="text-center md:text-left">
                     <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
                         <div class="w-6 h-6 bg-indigo-600 rounded-md flex items-center justify-center">
@@ -275,61 +324,118 @@
                         </div>
                         <span class="font-bold text-lg text-slate-900">PolyVTU</span>
                     </div>
-                    <p class="text-xs text-slate-400">Reliable data services</p>
+                    <p class="text-xs text-slate-400">Reliable data services at your fingertips</p>
                 </div>
-
-                <!-- Author Details -->
-                <div class="text-center space-y-2">
-                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Developer</p>
+                <div class="text-center space-y-3">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Developer</p>
                     <h3 class="text-sm font-bold text-slate-900">Polycarp Emmanuel Ogochukwu</h3>
-                    
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm">
-                        <a href="mailto:ifeanyiogochukwu0@gmail.com" 
-                           class="inline-flex items-center gap-1.5 text-slate-600 hover:text-indigo-600 transition-colors">
-                            <i class="fa-regular fa-envelope text-xs"></i>
-                            <span class="text-xs">ifeanyiogochukwu0@gmail.com</span>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+                        <a href="mailto:ifeanyiogochukwu0@gmail.com" class="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-indigo-600 transition-colors group">
+                            <div class="w-6 h-6 bg-slate-100 group-hover:bg-indigo-50 rounded-md flex items-center justify-center transition-colors">
+                                <i class="fa-regular fa-envelope text-[10px]"></i>
+                            </div>
+                            <span>ifeanyiogochukwu0@gmail.com</span>
                         </a>
-                        
-                        <span class="hidden sm:inline text-slate-300">|</span>
-                        
-                        <a href="https://wa.me/2348167843781" target="_blank" rel="noopener noreferrer"
-                           class="inline-flex items-center gap-1.5 text-slate-600 hover:text-emerald-600 transition-colors">
-                            <i class="fa-brands fa-whatsapp text-xs"></i>
-                            <span class="text-xs">08167843781</span>
+                        <a href="https://wa.me/2348167843781" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-emerald-600 transition-colors group">
+                            <div class="w-6 h-6 bg-slate-100 group-hover:bg-emerald-50 rounded-md flex items-center justify-center transition-colors">
+                                <i class="fa-brands fa-whatsapp text-[10px]"></i>
+                            </div>
+                            <span>08167843781</span>
                         </a>
                     </div>
                 </div>
-
-                <!-- Quick Links -->
                 <div class="text-center md:text-right">
-                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Support</p>
-                    <div class="flex items-center justify-center md:justify-end gap-4">
-                        <a href="https://wa.me/2348167843781" target="_blank" rel="noopener noreferrer"
-                           class="w-8 h-8 bg-emerald-100 hover:bg-emerald-200 rounded-lg flex items-center justify-center text-emerald-600 transition-colors"
-                           title="Chat on WhatsApp">
-                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Quick Support</p>
+                    <div class="flex items-center justify-center md:justify-end gap-3">
+                        <a href="https://wa.me/2348167843781" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl text-xs font-semibold transition-all duration-200 hover:shadow-sm">
+                            <i class="fa-brands fa-whatsapp"></i>
+                            Chat on WhatsApp
                         </a>
-                        <a href="mailto:ifeanyiogochukwu0@gmail.com"
-                           class="w-8 h-8 bg-indigo-100 hover:bg-indigo-200 rounded-lg flex items-center justify-center text-indigo-600 transition-colors"
-                           title="Send Email">
+                        <a href="mailto:ifeanyiogochukwu0@gmail.com" class="w-9 h-9 bg-slate-100 hover:bg-indigo-50 text-slate-500 hover:text-indigo-600 rounded-xl flex items-center justify-center transition-all duration-200" title="Send Email">
                             <i class="fa-regular fa-envelope text-sm"></i>
                         </a>
                     </div>
                 </div>
-
             </div>
-
-            <!-- Bottom Bar -->
             <div class="mt-8 pt-6 border-t border-slate-100 text-center">
-                <p class="text-xs text-slate-400">
-                     PolyVTU. Built by <span class="font-medium text-slate-600">Polycarp Emmanuel Ogochukwu</span>. All rights reserved.
-                </p>
+                <p class="text-[11px] text-slate-400">© {% now "Y" %} PolyVTU. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script src="{% static 'js/app.js' %}">
+    <!-- Popup Modal -->
+    <div id="popup" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity opacity-0" id="popup-backdrop"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md opacity-0 scale-95" id="popup-panel">
+                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div id="popup-icon" class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                                <i id="popup-icon-symbol" class="fa-solid fa-info text-indigo-600"></i>
+                            </div>
+                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                                <h3 class="text-lg font-semibold leading-6 text-slate-900" id="popup-title">Notification</h3>
+                                <div class="mt-2">
+                                    <p class="text-sm text-slate-500" id="popup-message">Message content goes here.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                        <button type="button" onclick="closePopup()" class="inline-flex w-full justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto transition-colors duration-200 active:scale-[0.98]">
+                            OK
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script src="{% static 'js/app.js' %}"></script>
+    <script>
+        function showPopup(title, message, type = 'info') {
+            const popup = document.getElementById('popup');
+            const backdrop = document.getElementById('popup-backdrop');
+            const panel = document.getElementById('popup-panel');
+            const iconContainer = document.getElementById('popup-icon');
+            const iconSymbol = document.getElementById('popup-icon-symbol');
+            
+            document.getElementById('popup-title').textContent = title;
+            document.getElementById('popup-message').textContent = message;
+            
+            const iconConfig = {
+                success: { bg: 'bg-emerald-100', icon: 'fa-check', color: 'text-emerald-600' },
+                error: { bg: 'bg-red-100', icon: 'fa-xmark', color: 'text-red-600' },
+                warning: { bg: 'bg-amber-100', icon: 'fa-exclamation', color: 'text-amber-600' },
+                info: { bg: 'bg-indigo-100', icon: 'fa-info', color: 'text-indigo-600' }
+            };
+            
+            const config = iconConfig[type] || iconConfig.info;
+            iconContainer.className = `mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full ${config.bg} sm:mx-0 sm:h-10 sm:w-10`;
+            iconSymbol.className = `fa-solid ${config.icon} ${config.color}`;
+            
+            popup.classList.remove('hidden');
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                panel.classList.remove('opacity-0', 'scale-95');
+                panel.classList.add('opacity-100', 'scale-100');
+            }, 10);
+        }
+
+        function closePopup() {
+            const popup = document.getElementById('popup');
+            const backdrop = document.getElementById('popup-backdrop');
+            const panel = document.getElementById('popup-panel');
+            
+            backdrop.classList.add('opacity-0');
+            panel.classList.remove('opacity-100', 'scale-100');
+            panel.classList.add('opacity-0', 'scale-95');
+            
+            setTimeout(() => popup.classList.add('hidden'), 200);
+        }
+
+        document.getElementById('popup-backdrop').addEventListener('click', closePopup);
     </script>
 </body>
 </html>
